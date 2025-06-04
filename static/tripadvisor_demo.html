@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TripAdvisor Demo</title>
+  <script type="module" src="./streaming.js"></script>
+  <script type="module">
+    import { ChatInterface } from './streaming.js';
+
+    let chat_interface = null;
+    function initChat(mode) {
+      if (chat_interface) {
+        chat_interface.generate_mode = mode;
+        return chat_interface;
+      }
+      // default site set to TripAdvisor so queries search that dataset
+      chat_interface = new ChatInterface('TripAdvisor', 'nlwebsearch', mode);
+      return chat_interface;
+    }
+
+    function handleQuery(mode) {
+      const query = document.getElementById('ta-query').value.trim();
+      if (!query) return;
+      document.getElementById('chat-container').style.display = 'block';
+      const ci = initChat(mode);
+      ci.sendMessage(query);
+    }
+
+    window.taAsk = () => handleQuery('list');
+    window.taSummarize = () => handleQuery('summarize');
+  </script>
+</head>
+<body>
+  <div class="search-box" style="display:flex; gap:8px; padding:20px;">
+    <input id="ta-query" type="text" placeholder="Ask about TripAdvisor" style="flex-grow:1; padding:12px;" />
+    <button onclick="taAsk()">Ask</button>
+    <button onclick="taSummarize()">Summarize</button>
+  </div>
+  <div id="chat-container" class="chat-container" style="display:none;"></div>
+</body>
+</html>

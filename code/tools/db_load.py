@@ -323,8 +323,13 @@ async def detect_file_type(file_path: str) -> Tuple[str, bool]:
                     # Either [0.123, 0.456, ...] format or just 0.123,0.456,... format
                     embedding_part = parts[2].strip()
                     if (embedding_part.startswith('[') and embedding_part.endswith(']')) or \
-                       (embedding_part.replace(',', '').replace('-', '').replace('.', '').replace('e', '').replace('E', '').replace('+', '').isdigit()):
+                       (embedding_part.replace(',', '').replace('-', '').replace('.', '').replace('e', '').replace('E', '').replace('+', '').isdigit():
                         has_embeddings = True
+                elif len(parts) == 2:
+                    # Two tab-separated fields - check if second field looks like JSON
+                    json_part = parts[1].lstrip()
+                    if json_part.startswith('{') or json_part.startswith('['):
+                        return 'json', has_embeddings
             
             # If we're checking a file with embeddings, it's a special JSON format
             if has_embeddings:
@@ -334,8 +339,8 @@ async def detect_file_type(file_path: str) -> Tuple[str, bool]:
             if first_line.startswith('{') or first_line.startswith('['):
                 return 'json', has_embeddings
             
-            # Check if it's CSV
-            if ',' in first_line and not first_line.startswith('<'):
+            # Check if it's CSV - avoid misclassifying tab-separated JSON data
+            if ',' in first_line and '\t' not in first_line and not first_line.startswith('<'):
                 return 'csv', has_embeddings
             
             # Check if it's XML/RSS

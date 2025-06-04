@@ -48,3 +48,27 @@ The main method is 'ChatInterface', which can be initialized with a default valu
 The streaming UI widgets work with the /ask endpoint.
 
 The presentation of each item can be specialized, based on the @type of the item. A good example of this is in static/recipe-renderer.js which is used to render recipes. These renderers can be used outside of a chat like interface as well.
+
+For a slightly richer example, `static/ask_summarize.html` shows how to trigger
+different generation modes. It displays **Ask** and **Summarize** buttons that
+change the `generate_mode` before sending the query:
+
+```
+window.askQuery = () => handleQuery('list');
+window.summarizeQuery = () => handleQuery('summarize');
+```
+
+The page uses the same `ChatInterface` from `streaming.js` to communicate with
+the `/ask` endpoint.
+
+A similar page, `static/tripadvisor_demo.html`, defaults the chat to the
+`TripAdvisor` dataset. It reuses the same logic but passes the site name when
+constructing the `ChatInterface`:
+
+```javascript
+chat_interface = new ChatInterface('TripAdvisor', 'nlwebsearch', mode);
+```
+
+This page also provides **Ask** and **Summarize** buttons so you can quickly
+query and summarize the TripAdvisor records that have been loaded via
+`db_load.py`.

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NLWeb Ask & Summarize Demo</title>
+  <script type="module" src="./streaming.js"></script>
+  <script type="module">
+    import { ChatInterface } from './streaming.js';
+
+    let chat_interface = null;
+    function initChat(mode) {
+      if (chat_interface) {
+        chat_interface.generate_mode = mode;
+        return chat_interface;
+      }
+      chat_interface = new ChatInterface('', 'nlwebsearch', mode);
+      return chat_interface;
+    }
+
+    function handleQuery(mode) {
+      const query = document.getElementById('nlweb-query').value.trim();
+      if (!query) return;
+      const chatContainer = document.getElementById('chat-container');
+      chatContainer.style.display = 'block';
+      const ci = initChat(mode);
+      ci.sendMessage(query);
+    }
+
+    window.askQuery = () => handleQuery('list');
+    window.summarizeQuery = () => handleQuery('summarize');
+  </script>
+</head>
+<body>
+  <div class="search-box" style="display:flex; gap:8px; padding:20px;">
+    <input id="nlweb-query" type="text" placeholder="Ask about the site" style="flex-grow:1; padding:12px;" />
+    <button onclick="askQuery()">Ask</button>
+    <button onclick="summarizeQuery()">Summarize</button>
+  </div>
+  <div id="chat-container" class="chat-container" style="display:none;"></div>
+</body>
+</html>
